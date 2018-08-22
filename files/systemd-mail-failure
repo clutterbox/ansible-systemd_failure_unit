@@ -10,7 +10,7 @@ fi
 sendmail -t -i <<MAIL
 To: $MAILTO
 From: $MAILFROM
-Subject: Unit $1 failed
+Subject: systemd unit $1 failed
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
 

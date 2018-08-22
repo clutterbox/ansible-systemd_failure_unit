@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: systemd_failure_unit
   author: Alexander Zielke
   description: Add a systemd unit to be used with OnFailure to mail errors
 
