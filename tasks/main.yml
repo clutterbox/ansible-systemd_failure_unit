@@ -1,0 +1,49 @@
+---
+- name: Copy systemd-mail-failure script
+  copy:
+    src: systemd-mail-failure
+    dest: /usr/local/bin/systemd-mail-failure
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy notify-failure service
+  copy:
+    src: notify-failure@.service
+    dest: /etc/systemd/system/notify-failure@.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: systemd daemon-reload
+
+- name: Create directory for service environment files
+  file:
+    path: /etc/systemd-notify
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Generate override files
+  copy:
+    content: "{% for k,v in item.1.items() %}{{ k.upper() }}={{ v }}\n{%endfor%}\n"
+    dest: "/etc/systemd-notify/{{ item.0 }}.env"
+  loop: "{{ systemd_failure_unit|dictsort }}"
+
+- block:
+  - name: Find override files
+    find:
+      paths: /etc/systemd-notify
+      patterns: "*.env"
+    register: envfiles
+
+  - name: Remove old env files
+    file:
+      path: "{{ item }}"
+      state: absent
+    loop: "{{ envfiles.files|json_query('[*].path') }}"
+    when: "item|basename|regex_replace('\\.env$', '') not in systemd_failure_unit.keys()"
+  # \end block
+  when: systemd_failure_unit_manage_env
+
+- meta: flush_handlers

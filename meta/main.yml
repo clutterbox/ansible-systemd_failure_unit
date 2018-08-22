@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Alexander Zielke
+  description: Add a systemd unit to be used with OnFailure to mail errors
+
+  license: MIT
+  min_ansible_version: 2.0.0
+  platforms:
+    - name: Ubuntu
+      versions:
+       - xenial
+       - bionic
+  galaxy_tags:
+    - systemd
+  dependencies: []

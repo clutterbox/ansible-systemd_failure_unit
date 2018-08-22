@@ -1,0 +1,9 @@
+[Unit]
+Description=Send status e-mail for %i
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/systemd-mail-failure %i
+EnvironmentFile=-/etc/systemd-notify/%i.env
+User=nobody
+Group=systemd-journal
