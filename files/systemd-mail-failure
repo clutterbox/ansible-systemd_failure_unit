@@ -5,9 +5,11 @@ if [[ -z "$MAILTO" ]]; then
 fi
 if [[ -z "$MAILFROM" ]]; then
     MAILFROM="systemd <root@$HOSTNAME>"
+else
+    ENVFROM="-f '$MAILFROM'"
 fi
 
-sendmail -t -i <<MAIL
+sendmail -t -i $ENVFROM <<MAIL
 To: $MAILTO
 From: $MAILFROM
 Subject: systemd unit $1 failed
