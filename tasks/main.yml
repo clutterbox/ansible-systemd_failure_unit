@@ -30,20 +30,20 @@
     dest: "/etc/systemd-notify/{{ item.0 }}.env"
   loop: "{{ systemd_failure_unit|dictsort }}"
 
-- block:
-  - name: Find override files
-    find:
-      paths: /etc/systemd-notify
-      patterns: "*.env"
-    register: envfiles
-
-  - name: Remove old env files
-    file:
-      path: "{{ item }}"
-      state: absent
-    loop: "{{ envfiles.files|json_query('[*].path') }}"
-    when: "item|basename|regex_replace('\\.env$', '') not in systemd_failure_unit.keys()"
-  # \end block
+- name: Find override files
+  find:
+    paths: /etc/systemd-notify
+    patterns: "*.env"
+  register: envfiles
   when: systemd_failure_unit_manage_env
+
+- name: Remove old env files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ envfiles.files|default([])|json_query('[*].path') }}"
+  when:
+    - systemd_failure_unit_manage_env
+    - "item|basename|regex_replace('\\.env$', '') not in systemd_failure_unit.keys()"
 
 - meta: flush_handlers
